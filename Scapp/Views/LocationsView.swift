@@ -12,11 +12,13 @@ struct LocationsView: View {
             VStack(spacing: 0){
                 header
                     .onTapGesture(perform: vm.toggleLocationsList)
-                    .padding()
                 Spacer()
+                footer
             }
+            .padding()
            
         }
+        .animation(.easeInOut, value: vm.mapLocation)
     }
 }
 
@@ -57,5 +59,17 @@ extension LocationsView {
         .cornerRadius(10.0)
         .shadow(color: Color.black.opacity(0.6), radius: 10.0, x: 0.0, y: 10.0)
        
+    }
+    
+    var footer: some View {
+        ZStack{
+            ForEach(vm.locations) { location in
+                if vm.mapLocation == location {
+                    LocationPreviewView(location: location)
+                        .shadow(radius: 10.0)
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                }
+            }
+        }
     }
 }
