@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LocationPreviewView: View {
-    @EnvironmentObject var vm: LocationsViewModel
+    @EnvironmentObject private var vm: LocationsViewModel
     let location: Location
     var body: some View {
         HStack(alignment: .bottom, spacing: 16.0){
@@ -28,14 +28,14 @@ struct LocationPreviewView: View {
 }
 
 //#Preview {
-//    ZStack{
-//        Color.orange.ignoresSafeArea()
+////    ZStack{
+////        Color.orange.ignoresSafeArea()
 //        LocationPreviewView(location: LocationsDataService.locations.first!)
-//    }
+////    }
 //}
 
 extension LocationPreviewView {
-    var imageSection: some View {
+    private var imageSection: some View {
         ZStack{
             Image(location.imageNames.first!)
                 .resizable()
@@ -48,7 +48,7 @@ extension LocationPreviewView {
         .cornerRadius(10.0)
     }
     
-    var titleSection: some View {
+    private var titleSection: some View {
         VStack(alignment: .leading, spacing: 4.0){
             Text(location.name)
                 .font(.title2)
@@ -58,19 +58,19 @@ extension LocationPreviewView {
         }
     }
     
-    var learnMoreBtn: some View {
+    private var learnMoreBtn: some View {
         Button {
-            //
+            vm.showLocationPreviewSheet = location
         } label: {
             Text("Learn more")
                 .font(.headline)
-                .fontWeight(.bold) 
+                .fontWeight(.bold)
                 .frame(width: 130, height: 35)
         }
         .buttonStyle(.borderedProminent)
     }
     
-    var nextBtn: some View {
+    private var nextBtn: some View {
         Button {
             vm.nextBtnPressed()
         } label: {

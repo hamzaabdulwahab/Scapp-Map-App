@@ -5,20 +5,24 @@ import Foundation
 
 struct LocationsView: View {
     @EnvironmentObject private var vm: LocationsViewModel
-    @State var showSheet: Bool = false
     var body: some View {
         ZStack {
-            Map(position: $vm.cameraPosition)
+            // background layer
+            mapLayer
+            
+            // foreground layer
             VStack(spacing: 0){
                 header
                     .onTapGesture(perform: vm.toggleLocationsList)
                 Spacer()
-                footer
+                locationPreviewView
             }
             .padding()
-           
+            
         }
-        .animation(.easeInOut, value: vm.mapLocation)
+        .sheet(item: $vm.showLocationPreviewSheet, onDismiss: nil){ location in LocationDetailView(location: location)
+        }
+        .animation(.easeOut, value: vm.mapLocation)
     }
 }
 
@@ -28,7 +32,7 @@ struct LocationsView: View {
 }
 
 extension LocationsView {
-   private var header: some View  {
+    private var header: some View  {
         VStack {
             
             Button {
@@ -43,14 +47,14 @@ extension LocationsView {
                     .overlay(alignment: .leading, content: {
                         Image(systemName:
                                 "arrow.up")
-                            .font(.headline)
-                            .fontWeight(.black)
-                            .padding()
-                            .rotationEffect(Angle(degrees: vm.showLocationsList ? 180 : 0))
+                        .font(.headline)
+                        .fontWeight(.black)
+                        .padding()
+                        .rotationEffect(Angle(degrees: vm.showLocationsList ? 180 : 0))
                     })
             }
             .foregroundStyle(.primary)
-
+            
             if vm.showLocationsList {
                 LocationsListView()
             }
@@ -58,10 +62,10 @@ extension LocationsView {
         .background(vm.showLocationsList ? .thinMaterial : .thickMaterial)
         .cornerRadius(10.0)
         .shadow(color: Color.black.opacity(0.6), radius: 10.0, x: 0.0, y: 10.0)
-       
+        
     }
     
-    var footer: some View {
+    private var locationPreviewView: some View {
         ZStack{
             ForEach(vm.locations) { location in
                 if vm.mapLocation == location {
@@ -72,4 +76,24 @@ extension LocationsView {
             }
         }
     }
+    
+    private var mapLayer: some View {
+        Map(position: $vm.cameraPosition) {
+            ForEach(vm.locations){location in
+                Annotation(location.name, coordinate: location.coordinates) {
+                    LocationMapAnnotation()
+                        .scaleEffect(
+                            vm.mapLocation == location ?
+                            1.0 : 0.6
+                        )
+                        .onTapGesture{
+                            vm.showNextLocation(location: location)
+                        }
+                }
+            }
+        }
+    }
 }
+
+
+

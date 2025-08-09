@@ -11,9 +11,11 @@ class LocationsViewModel: ObservableObject {
     }
     
     @Published var cameraPosition: MapCameraPosition = .camera(.init(centerCoordinate: CLLocationCoordinate2D(latitude: 41.8902, longitude: 12.4922),
-                                                                     distance: 1500, heading: 0, pitch: 45))
+                                                                     distance: 30000, heading: 0, pitch: 45))
     
     @Published var showLocationsList: Bool = false
+    
+    @Published var showLocationPreviewSheet: Location? = nil
     
     init() {
         let locations = LocationsDataService.locations
