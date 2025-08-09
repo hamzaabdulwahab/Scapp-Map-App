@@ -5,6 +5,7 @@ import Foundation
 
 struct LocationsView: View {
     @EnvironmentObject private var vm: LocationsViewModel
+    let widthForiPad: CGFloat = 700
     var body: some View {
         ZStack {
             // background layer
@@ -21,6 +22,7 @@ struct LocationsView: View {
             
         }
         .sheet(item: $vm.showLocationPreviewSheet, onDismiss: nil){ location in LocationDetailView(location: location)
+                .presentationSizing(.page)
         }
         .animation(.easeOut, value: vm.mapLocation)
     }
@@ -59,6 +61,7 @@ extension LocationsView {
                 LocationsListView()
             }
         }
+        .frame(maxWidth: widthForiPad)
         .background(vm.showLocationsList ? .thinMaterial : .thickMaterial)
         .cornerRadius(10.0)
         .shadow(color: Color.black.opacity(0.6), radius: 10.0, x: 0.0, y: 10.0)
@@ -70,7 +73,9 @@ extension LocationsView {
             ForEach(vm.locations) { location in
                 if vm.mapLocation == location {
                     LocationPreviewView(location: location)
+                        .frame(maxWidth: widthForiPad)
                         .shadow(radius: 10.0)
+                        .frame(maxWidth: .infinity)
                         .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 }
             }
