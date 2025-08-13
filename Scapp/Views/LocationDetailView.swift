@@ -3,13 +3,14 @@ import MapKit
 
 struct LocationDetailView: View {
     @EnvironmentObject private var vm: LocationsViewModel
+    @State var scale: CGFloat = 0.0
     let location: Location
-
+    
     var body: some View {
         ScrollView(showsIndicators: false){
             LazyVStack {
                 imageSection
-                    .shadow(color: Color.black.opacity(0.7), radius: 20.0, x: 0.0, y: 7.0)
+                    .shadow(color: Color.black.opacity(0.5), radius: 20.0, x: 0.0, y: 7.0)
                 
                 VStack(alignment: .leading, spacing: 16.0){
                     titleSection
@@ -24,15 +25,15 @@ struct LocationDetailView: View {
         }
         .background(.ultraThinMaterial)
         .ignoresSafeArea()
-        .overlay(alignment: .topLeading){
-            backBtn
-        }
+        // .overlay(alignment: .topLeading){
+        // backBtn
+        // }
     }
 }
 
-//#Preview {
-//    LocationDetailView(location: LocationsDataService.locations.first!)
-//}
+#Preview {
+    LocationDetailView(location: LocationsDataService.locations.first!)
+}
 
 extension LocationDetailView {
     private var imageSection: some View {
@@ -43,6 +44,20 @@ extension LocationDetailView {
                     .scaledToFill()
                     .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
                     .clipped()
+                    .scaleEffect(1.0 + scale)
+                    .gesture(
+                        MagnifyGesture()
+                            .onChanged{ value in
+                                if value.magnification >= 0.85 {
+                                    scale = value.magnification - 1.0
+                                }
+                            }
+                            .onEnded{ _ in
+                                withAnimation(.spring()) {
+                                    scale = 0.0
+                                }
+                            }
+                    )
                 
             }
         }
@@ -90,19 +105,20 @@ extension LocationDetailView {
         .allowsHitTesting(false)
     }
     
-    private var backBtn: some View {
-        Button {
-            vm.showLocationPreviewSheet = nil
-        } label: {
-            Image(systemName: "xmark")
-                .font(.headline)
-                .foregroundStyle(Color.primary)
-                .padding()
-                .background(.thickMaterial)
-                .cornerRadius(10.0)
-                .padding()
-                .shadow(color: Color.black.opacity(0.5), radius: 10.0)
-        }
-
-    }
+    
+    /* private var backBtn: some View {
+     Button {
+     vm.showLocationPreviewSheet = nil
+     } label: {
+     Image(systemName: "xmark")
+     .font(.headline)
+     .foregroundStyle(Color.primary)
+     .padding()
+     .background(.thickMaterial)
+     .cornerRadius(10.0)
+     .padding()
+     .shadow(color: Color.black.opacity(0.5), radius: 10.0)
+     }
+     
+     } */
 }

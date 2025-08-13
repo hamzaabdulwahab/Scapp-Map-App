@@ -21,17 +21,21 @@ struct LocationsView: View {
             .padding()
             
         }
+        
         .sheet(item: $vm.showLocationPreviewSheet, onDismiss: nil){ location in LocationDetailView(location: location)
-                .presentationSizing(.page)
+//                .presentationSizing(.page)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.thickMaterial)
         }
         .animation(.easeOut, value: vm.mapLocation)
     }
 }
 
-#Preview {
-    LocationsView()
-        .environmentObject(LocationsViewModel())
-}
+//#Preview {
+//    LocationsView()
+//        .environmentObject(LocationsViewModel())
+//}
 
 extension LocationsView {
     private var header: some View  {
